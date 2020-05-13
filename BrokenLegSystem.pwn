@@ -81,7 +81,6 @@ CMD:treatwound( playerid ) {
 	SendClientMessage( playerid, 0x757575FF, "** You've successfully treated your broken leg. *" );
 	ResetBVars( playerid );
 	ApplyAnimation( playerid, "PED", "getup_front", 4.0, 0, 1, 1, 0, 0, 1 );
-	if( PlayerHasDialogOpen[ playerid ] ) ShowPlayerDialog( playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "" );
 	return ( true );
 }
 /*|============================================================|COMMANDS|=============================================================|*/
