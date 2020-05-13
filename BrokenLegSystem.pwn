@@ -11,7 +11,7 @@
 /*|=============================================================|INCUDES|=============================================================|*/
 
 /*|============================================================|VARIABLES|============================================================|*/
-new BitArray:PlayerBrokeLeg< MAX_PLAYERS >, BitArray:CrawlTimer < MAX_PLAYERS >, LastAnimation[ MAX_PLAYERS ] = { -1, ... };
+new BitArray:PlayerBrokeLeg< MAX_PLAYERS >, BitArray:CrawlTimer < MAX_PLAYERS >, BitArray:LastAnimation< MAX_PLAYERS >;
 /*|============================================================|VARIABLES|============================================================|*/
 
 /*|=============================================================|ARRAYS|==============================================================|*/
@@ -28,7 +28,7 @@ new FeltMsg[ 5 ] [ 144 ] = {
 ResetBVars( playerid ) {
 	if( Bit_Get( PlayerBrokeLeg, playerid ) ) Bit_Vet( PlayerBrokeLeg, playerid );
 	if( Bit_Get( CrawlTimer, playerid ) ) Bit_Vet( CrawlTimer, playerid );
-	LastAnimation[ playerid ] = -1;
+	if( Bit_Get( LastAnimation, playerid ) ) Bit_Vet( LastAnimation, playerid );
 	return ( true );
 }
 /*|============================================================|FUNCTIONS|============================================================|*/
@@ -43,7 +43,8 @@ timer _CrawlPlayer[1000](playerid, option) {
 	return ( true );
 }
 ptask _OneSecondTimer[1000](playerid) {
-	LastAnimation[ playerid ] = GetPlayerAnimationIndex( playerid );
+	if( GetPlayerAnimationIndex( playerid ) == 1130 ) Bit_Let( LastAnimation, playerid );
+	else if( !Bit_Get( LastAnimation, playerid ) ) Bit_Vet( LastAnimation, playerid );
 	return ( true );
 }
 /*|=============================================================|TIMERS|==============================================================|*/
@@ -59,7 +60,7 @@ public OnFilterScriptInit() {
 public OnPlayerDisconnect( playerid, reason ) return ResetBVars( playerid );
 
 public OnPlayerTakeDamage( playerid, issuerid, Float:amount, weaponid, bodypart ) {
-	if( amount >= 9.0 && !Bit_Get( PlayerBrokeLeg, playerid ) && LastAnimation[ playerid ] == 1130 ) {
+	if( amount >= 9.0 && !Bit_Get( PlayerBrokeLeg, playerid ) && Bit_Get( LastAnimation, playerid ) ) {
 		ApplyAnimation( playerid, "SWEET", "Sweet_injuredloop", 4.0, 1, 0, 0, 0, 0 ), SendClientMessage( playerid, 0x757575FF, FeltMsg [ random( sizeof FeltMsg ) ] );
 		if( !Bit_Get( PlayerBrokeLeg, playerid ) ) Bit_Let( PlayerBrokeLeg, playerid );
 	}
